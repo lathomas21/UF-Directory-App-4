@@ -47,15 +47,40 @@ exports.read = function(req, res) {
 exports.update = function(req, res) {
   var listing = req.listing;
 
-  /* Replace the article's properties with the new properties found in req.body */
-  /* save the coordinates (located in req.results if there is an address property) */
-  /* Save the article */
+  listing.name = req.body.name;
+  listing.code = req.body.code;
+  listing.address = req.body.address;
+  /*if(listing.address){
+    listing.coordinates = req.results;
+  }*/
+  if(req.results){
+    listing.coordinates = {
+      latitude: req.results.lat,
+      longitude: req.results.lng
+    };
+  }
+  listing.save(function(err){
+    if(err){
+      throw err;
+    }
+    else{
+      res.json(req.listing);
+    }
+  })
 };
 
 /* Delete a listing */
 exports.delete = function(req, res) {
   var listing = req.listing;
+  listing.remove(function(err) {
+      if(err) {
 
+        throw err;
+      }
+      else {
+        res.json(req.listing);
+      }
+    })
   
 };
 
